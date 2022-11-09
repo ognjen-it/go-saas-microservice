@@ -3,12 +3,63 @@ package handlers
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
 	"github.com/ognjen-it/go-saas-microservice/entity"
 )
+
+// HealthCheck is used to get
+func HealthCheckHandler() http.HandlerFunc {
+	return func(rw http.ResponseWriter, r *http.Request) {
+		data, err := entity.HealthCheck()
+		if err != nil {
+			rw.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+		// Write the body with JSON data
+		// rw.Header().Add("content-type", "application/json")
+		rw.Write(data)
+	}
+}
+
+func MaxHandler() http.HandlerFunc {
+	return func(rw http.ResponseWriter, r *http.Request) {
+		type Person struct {
+			Customer_id   string `json:"customer_id"`
+			Customer_name string `json:"customer_name"`
+			Age           int    `json:"age"`
+		}
+
+		type listOfPersons struct {
+			Data []Person `json:"data"`
+		}
+
+		var myList listOfPersons
+		var s []int
+
+		err := json.NewDecoder(r.Body).Decode(&myList)
+		if err != nil {
+			log.Fatalf("Error parsing the response body: %s", err)
+		}
+
+		for _, p := range myList.Data {
+			s = append(s, p.Age)
+		}
+
+		max := s[0]
+		for _, v := range s {
+			if v > max {
+				max = v
+			}
+		}
+
+		fmt.Fprintf(rw, "Max age of cusomters is: %+v", max)
+	}
+}
 
 // GetProductsHandler is used to get data inside the products defined on our product catalog
 func GetProductsHandler() http.HandlerFunc {

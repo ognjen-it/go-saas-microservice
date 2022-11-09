@@ -13,6 +13,8 @@ func main() {
 	router := mux.NewRouter()
 
 	// route properly to respective handlers
+	router.Handle("/health-check", handlers.HealthCheckHandler()).Methods("GET")
+	router.Handle("/max", handlers.MaxHandler()).Methods("POST")
 	router.Handle("/products", handlers.GetProductsHandler()).Methods("GET")
 	router.Handle("/products", handlers.CreateProductHandler()).Methods("POST")
 	router.Handle("/products/{id}", handlers.GetProductHandler()).Methods("GET")

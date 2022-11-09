@@ -29,6 +29,11 @@ func GetProducts() ([]byte, error) {
 	return data, nil
 }
 
+func HealthCheck() ([]byte, error) {
+	data := []byte("{'test': 'test'}")
+	return data, nil
+}
+
 // GetProduct takes id as input and returns the corresponding product, else it returns ErrNoProduct error.
 func GetProduct(id string) (Product, error) {
 	// Read JSON file
